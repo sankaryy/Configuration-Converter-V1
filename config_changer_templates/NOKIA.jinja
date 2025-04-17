@@ -1,0 +1,845 @@
+# TiMOS-C-22.10.R4 cpm/x86hops64 Nokia 7250 IXR Copyright (c) 2000-2023 Nokia.
+# All rights reserved. All use subject to applicable license agreements.
+# Built on Wed Apr 12 16:04:46 PDT 2023 by builder in /builds/c/2210B/R4/panos/main/sros
+# Configuration format version 22.10 revision 0
+
+# Generated FRI AUG 30 09:39:21 2024 UTC
+
+exit all
+configure
+#--------------------------------------------------
+echo "System Configuration"
+#--------------------------------------------------
+    system
+        name "{{system_name}}"
+        management-interface
+            yang-modules
+                no nokia-combined-modules
+                nokia-submodules
+            exit
+        exit
+        snmp
+            engineID "{{snmp_engineid}}"
+        exit
+        time
+            ntp
+                no shutdown
+            exit
+            sntp
+                shutdown
+            exit
+            zone IST 05:30
+        exit
+    exit
+#--------------------------------------------------
+echo "System Security Configuration"
+#--------------------------------------------------
+    system
+        security
+            profile "default"
+                netconf
+                    base-op-authorization
+                        action
+                        cancel-commit
+                        close-session
+                        commit
+                        copy-config
+                        create-subscription
+                        delete-config
+                        discard-changes
+                        edit-config
+                        get
+                        get-config
+                        get-data
+                        get-schema
+                        validate
+                    exit
+                exit
+                entry 10
+                    match "exec"
+                    action permit
+                exit
+                entry 20
+                    match "exit"
+                    action permit
+                exit
+                entry 30
+                    match "help"
+                    action permit
+                exit
+                entry 40
+                    match "logout"
+                    action permit
+                exit
+                entry 50
+                    match "password"
+                    action permit
+                exit
+                entry 60
+                    match "show config"
+                    action deny
+                exit
+                entry 65
+                    match "show li"
+                    action deny
+                exit
+                entry 66
+                    match "clear li"
+                    action deny
+                exit
+                entry 67
+                    match "tools dump li"
+                    action deny
+                exit
+                entry 70
+                    match "show"
+                    action permit
+                exit
+                entry 75
+                    match "state"
+                    action permit
+                exit
+                entry 80
+                    match "enable-admin"
+                    action permit
+                exit
+                entry 90
+                    match "enable"
+                    action permit
+                exit
+                entry 100
+                    match "configure li"
+                    action deny
+                exit
+            exit
+            profile "administrative"
+                netconf
+                    base-op-authorization
+                        action
+                        cancel-commit
+                        close-session
+                        commit
+                        copy-config
+                        create-subscription
+                        delete-config
+                        discard-changes
+                        edit-config
+                        get
+                        get-config
+                        get-data
+                        get-schema
+                        kill-session
+                        lock
+                        validate
+                    exit
+                exit
+                entry 10
+                    match "configure system security"
+                    action permit
+                exit
+                entry 20
+                    match "show system security"
+                    action permit
+                exit
+                entry 30
+                    match "tools perform security"
+                    action permit
+                exit
+                entry 40
+                    match "tools dump security"
+                    action permit
+                exit
+                entry 50
+                    match "admin system security"
+                    action permit
+                exit
+                entry 100
+                    match "configure li"
+                    action deny
+                exit
+                entry 110
+                    match "show li"
+                    action deny
+                exit
+                entry 111
+                    match "clear li"
+                    action deny
+                exit
+                entry 112
+                    match "tools dump li"
+                    action deny
+                exit
+            exit
+            password
+                authentication-order tacplus local 
+                no health-check
+                enable-admin-control
+                    tacplus-map-to-priv-lvl 15
+                exit
+            exit
+            {%- if tacaus_details %}
+            tacplus
+                accounting
+                authorization use-priv-lvl
+                priv-lvl-map
+                    priv-lvl 15 "administrative"
+                exit
+                timeout 10
+                {%- for tacaus_ip in tacaus_details %}
+                server {{loop.index}} address {{tacaus_ip}} secret "{{tacacs_password}}"
+                {%- endfor %}
+            exit
+            {%- endif %}
+            {%- if snmpv3_username %}
+            user "{{snmpv3_username}}"
+                password "{{snmpv3_password}}"
+                access snmp
+                snmp
+                    authentication hash2 hmac-md5-96 {{snmpv3_md5}} privacy cfb128-aes-128 {{snmpv3_aes}}
+                    group "{{snmp_group}}"
+                exit
+            exit
+            {%- endif %}
+            {%- if local_password %}
+            user "admin"
+                password "{{local_password}}"
+                access console ftp snmp
+                console
+                    member "administrative"
+                    member "default"
+                exit
+            exit
+            {%- endif %}
+            {%- if snmp_group %}
+            snmp
+                access group "{{snmp_group}}" security-model usm security-level privacy read "iso" write "iso" notify "iso"
+            exit
+            {%- endif %}
+            ssh
+                preserve-key
+            exit
+            {%- if keychain_key %}
+            keychain "keyauth"
+                direction
+                    bi
+                        entry 1 key "{{keychain_key}}" algorithm hmac-sha-256
+                            begin-time 2023/04/24 18:30:00 UTC
+                        exit
+                    exit
+                exit
+                no shutdown
+            exit
+            {%- endif %}
+        exit
+    exit
+{%- if banner %}
+#--------------------------------------------------
+echo "System Login Control Configuration"
+#--------------------------------------------------
+    system
+        login-control
+            ssh
+                inbound-max-sessions 15
+                outbound-max-sessions 15
+            exit
+            idle-timeout 5
+            motd url cf3:banner.txt
+            login-banner
+        exit
+    exit
+{%- endif %}
+{%- if syslog %}
+#--------------------------------------------------
+echo "Log Configuration"
+#--------------------------------------------------
+    log
+    {%- for syslog_ips in syslog %}
+        syslog {{loop.index}} name "{{loop.index}}"
+            address {{syslog_ips}}
+            facility local{{loop.index+1}}
+        exit
+        log-id {{loop.index}} name "{{loop.index}}"
+            shutdown
+            time-format local
+            from main security change
+            to syslog {{loop.index}}
+        exit
+    {%- endfor %}
+    exit
+{%- endif -%}
+{% set vars = {'qinq_vlan': False} -%}
+{%- for ether_id in Eth_Trunk -%}
+{%-if Eth_Trunk[ether_id]['qinq_vlan']-%}
+{% if vars.update({'qinq_vlan':True}) -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- if vars['qinq_vlan'] %}
+#--------------------------------------------------
+echo "Connection Profile Vlan Configuration"
+#--------------------------------------------------
+{%- for ether_id in Eth_Trunk %}
+{%-if Eth_Trunk[ether_id]['qinq_vlan']%}
+    connection-profile-vlan {{Eth_Trunk[ether_id]['connection_profile']}} create
+    {%-if Eth_Trunk[ether_id]['description']%}
+        description "{{Eth_Trunk[ether_id]['description']}}"
+    {%-endif %}
+    {%-if Eth_Trunk[ether_id]['qinq_vlan'] is not string %}
+    {%-for vlans in Eth_Trunk[ether_id]['qinq_vlan'] %}
+        vlan-range {{vlans}}
+    {%- endfor -%}
+    {%-else %}
+        vlan-range {{Eth_Trunk[ether_id]['qinq_vlan']}}
+    {%-endif %}
+    exit
+{%-endif-%}
+{%-endfor-%}
+{%-endif %}
+#--------------------------------------------------
+echo "Card Configuration"
+#--------------------------------------------------
+    card 1
+        card-type imm24-sfp++8-sfp28+2-qsfp28
+        mda 1
+            no shutdown
+        exit
+        no shutdown
+    exit
+#--------------------------------------------------
+echo "Connector Configuration"
+#--------------------------------------------------
+    port 1/1/c33
+        shutdown
+    exit
+    port 1/1/c34
+        shutdown
+    exit
+{%-if Port_Configuration %}
+#--------------------------------------------------
+echo "Port Configuration"
+#--------------------------------------------------
+{%- for ports in Port_Configuration -%}
+{%- if ports %}
+{%- if Port_Configuration[ports]['status'] != 'shutdown' %}
+    port {{ports}}
+        {%- if Port_Configuration[ports]['description'] %}
+        description "{{Port_Configuration[ports]['description']}}"
+        {%- endif %}
+        ethernet
+        {%-if Port_Configuration[ports]['Port_BW']=='1'%}
+            speed 1000
+            autonegotiate limited
+            {%-endif %}
+            mode hybrid
+            encap-type dot1q
+            lldp
+                dest-mac nearest-bridge
+                    admin-status tx-rx
+                    tx-tlvs port-desc sys-name sys-desc
+                    tx-mgmt-address system
+                    port-id-subtype tx-if-name
+                exit
+            exit
+        exit
+        no shutdown
+    exit
+{%- endif-%}
+{%- endif-%}
+{%- endfor-%}
+{%- endif %}
+#--------------------------------------------------
+echo "System Sync-If-Timing Configuration"
+#--------------------------------------------------
+    system
+        sync-if-timing
+            begin
+            commit
+        exit
+    exit
+{%- if Eth_Trunk %}
+#--------------------------------------------------
+echo "LAG Configuration"
+#--------------------------------------------------
+{%-for ether_id in Eth_Trunk %}
+{%-if Eth_Trunk[ether_id]['ports'] %}
+    lag {{ether_id}}
+        description "{{Eth_Trunk[ether_id]['description']}}"
+        mode hybrid
+        encap-type dot1q
+    {%-for ports in Eth_Trunk[ether_id]['ports']%}
+        port {{ports}}
+    {%-endfor %}
+        lacp active
+        no shutdown
+    exit
+{%-endif-%}
+{%- endfor -%}
+{%-endif %}
+#--------------------------------------------------
+echo "Management Router Configuration"
+#--------------------------------------------------
+    router management
+    exit
+#--------------------------------------------------
+echo "Router (Network Side) Configuration"
+#--------------------------------------------------
+    router Base
+    {%-for vlans in vlan%}
+    {%- if vlans not in management_vlans -%}
+    {%-if vlan[vlans]['IP']%}
+        interface "Vlan{{vlans}}"
+            address {{vlan[vlans]['IP'][0]}}/{{vlan[vlans]['prefixlen']}}
+            {%-if vlan[vlans]['lag'] %}
+            port lag-{{vlan[vlans]['lag'][0]}}:{{vlans}}
+            {%-elif vlan[vlans]['port'] %}
+            port {{vlan[vlans]['port']}}:{{vlans}}
+            {%-endif %}
+            ingress
+            exit
+            no shutdown
+        exit
+        {%- endif %}
+        {%- endif %}
+        {%- endfor %}
+        {%-for loopback_ip in loopback %}
+        {%- if loopback_ip %}
+        {%- if loopback[loopback_ip]['system_id']%}
+        interface "system{{loopback[loopback_ip]['system_id']}}"
+            address {{loopback[loopback_ip]['IP_subnet'][0]}}/{{loopback[loopback_ip]['prefixlen']}}
+            loopback
+            ingress
+            exit
+            no shutdown
+        exit
+        {%- else %}
+        interface "system"
+            address {{loopback[loopback_ip]['IP_subnet'][0]}}/{{loopback[loopback_ip]['prefixlen']}}
+            no shutdown
+        exit
+        {%- endif %}
+        {%-endif-%}
+        {%- endfor %}
+#--------------------------------------------------
+echo "ISIS Configuration"
+#--------------------------------------------------
+{%-for vlans_id in vlan-%}
+{%-if vlans_id=="isis"-%}
+{%-for isis_id in vlan[vlans_id]%}
+        isis {{vlan["isis"][isis_id]["changed_id"]}}
+            level-capability level-{{vlan["isis"][isis_id]["level"]}}
+            {%-if vlan["isis"][isis_id]["area_id"] is not string-%}
+            {%-for area_id in vlan["isis"][isis_id]["area_id"] %}
+            area-id {{area_id}}
+            {%-endfor %}
+            {%-else %}
+            area-id {{vlan["isis"][isis_id]["area_id"]}}
+            {%-endif%}
+            level {{vlan["isis"][isis_id]["level"]}}
+            {%-if vlan["isis"][isis_id]["isis_cost_style"]== "wide"%}
+                wide-metrics-only
+            {%-endif %}
+            exit
+            {%- if loopback -%}
+            {%-for loopback_id in loopback-%}
+            {%-if loopback_id -%}
+            {%if loopback[loopback_id]["isis_process_id"]==isis_id -%}
+            {%-if loopback[loopback_id]["system_id"]%}
+            interface "system{{loopback[loopback_id]["system_id"]}}"
+                no shutdown
+            exit
+            {%-else %}
+            interface "system"
+                no shutdown
+            exit
+            {%-endif-%}
+            {%-endif-%}
+            {%-endif-%}
+            {%-endfor-%}
+            {%-endif -%}
+            {%-endfor-%}
+            {%-endif -%}
+            {%-endfor %}
+{%-for vlans_id in vlan-%}
+{%-if vlans_id!="isis" -%}
+{%- if vlans_id not in management_vlans %}
+{%- if vlan[vlans_id]["isis_process_id"] %}
+            interface "Vlan{{vlans_id}}"
+            {%-if vlan[vlans_id]["keychain"] %}
+                hello-auth-keychain "{{vlan[vlans_id]["keychain"]}}"
+            {%-endif %}
+                interface-type broadcast
+            {%-if vlan[vlans_id]["isis_cost"]-%}
+            {%-for isis_id in vlan["isis"]-%}
+            {%- if vlan["isis"][isis_id]["level"]%}
+                level {{vlan["isis"][isis_id]["level"]}}
+                    metric {{vlan[vlans_id]["isis_cost"]}}
+                exit
+            {%-endif-%}
+            {%-endfor-%}
+            {%-endif %}
+                no shutdown
+            exit
+{%-endif-%}
+{%-endif-%}
+{%-endif-%}
+{%-endfor %}
+            no shutdown
+        exit
+{% set vars = {'mpls': False} -%}
+{%- for vlans_id in vlan -%}
+{%-if vlan[vlans_id]["mpls_signal"]-%}
+{% if vars.update({'mpls':True}) -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- if vars['mpls']-%}
+#--------------------------------------------------
+echo "MPLS Configuration"
+#--------------------------------------------------
+        mpls
+            interface "system"
+                no shutdown
+            exit
+            {%- for vlans_id in vlan %}
+            {%- if vlans_id not in management_vlans %}
+            {%-if vlan[vlans_id]["mpls_signal"] %}
+            interface "Vlan{{vlans_id}}"
+                no shutdown
+            exit
+            {%-endif-%}
+            {%-endif-%}
+            {%- endfor %}
+        exit
+#--------------------------------------------------
+echo "RSVP Configuration"
+#--------------------------------------------------
+        rsvp
+            shutdown
+            interface "system"
+                no shutdown
+            exit
+            {%- for vlans_id in vlan %}
+            {%- if vlans_id not in management_vlans %}
+            {%-if vlan[vlans_id]["mpls_signal"] %}
+            interface "Vlan{{vlans_id}}"
+                no shutdown
+            exit
+            {%-endif-%}
+            {%-endif-%}
+            {%- endfor %}
+        exit
+#--------------------------------------------------
+echo "MPLS LSP Configuration"
+#--------------------------------------------------
+        mpls
+            no shutdown
+        exit 
+#--------------------------------------------------
+echo "LDP Configuration"
+#--------------------------------------------------
+        ldp
+            export "LSR_POLICY"
+            import "LER_POLICY"
+            import-pmsi-routes
+            exit
+            tcp-session-parameters
+            exit
+            interface-parameters
+            {%-for vlan_id in vlan-%}
+            {%-if vlan[vlan_id]["mpls_signal"] %}
+                interface "Vlan{{vlan_id}}" dual-stack
+                    ipv4
+                        no shutdown
+                    exit
+                    no shutdown
+                exit
+            {%-endif-%}
+            {%-endfor%}
+            exit
+            targeted-session
+            {%-for peer in mpls_peer%}
+                peer {{peer}}
+                    no shutdown
+                exit
+                {%-endfor%}
+            exit
+            no shutdown
+        exit
+    exit      
+{%-endif %}
+#--------------------------------------------------
+echo "Service Configuration"
+#--------------------------------------------------
+    service
+    {%- for peer in mpls_peer %}
+        sdp {{mpls_peer[peer]["changed_id"]}} mpls create
+            far-end {{peer}}
+            ldp
+            keep-alive
+                shutdown
+            exit
+            no shutdown
+        exit
+    {%- endfor %}
+    {%- for vlans_id in vlan -%}
+    {%- if vlan[vlans_id]["customer_id"]%}
+        customer {{vlan[vlans_id]["customer_id"]}} name "MGMT-{{vlans_id}}" create
+        exit
+    {%-endif %}
+    {%- if vlan[vlans_id]["IES"]%}
+        ies {{vlan[vlans_id]["IES"]}} name "VL{{vlans_id}}" customer {{vlan[vlans_id]["customer_id"]}} create
+            interface "MGMT-{{vlans_id}}" create
+            exit
+        exit
+    {%-endif %}
+    {%-endfor %}
+    {%- for vlans_id in vlan -%}
+    {%-if vlan[vlans_id]["vsi_name"] %}
+        vpls {{vlans_id}} name "{{vlans_id}}" customer 1 create
+            stp
+                shutdown
+            exit
+            {%- for lag in vlan[vlans_id]["lag"] %}
+            sap lag-{{lag}}:{{vlans_id}} create
+                ingress
+                    vlan-manipulation
+                        preserve
+                    exit
+                exit
+                egress
+                    vlan-manipulation
+                        preserve
+                    exit
+                exit
+                no shutdown
+            exit
+{%-endfor -%}
+{%-endif %}
+            {%- for vsi_id in vsi-%}
+            {%- if vlan[vlans_id]["vsi_name"]==vsi_id -%}
+            {%-for peer in mpls_peer-%}
+            {%-if vsi[vsi_id]["peer"]==peer %}
+            spoke-sdp {{mpls_peer[peer]["changed_id"]}}:{{vsi[vsi_id]["vsi_id"]}} vc-type vlan create
+                no shutdown
+            exit
+            no shutdown
+        exit
+{%-endif -%}
+{%-endfor %}
+{%-endif -%}
+{%-endfor %}
+{%-endfor -%}
+    {%- for vlans_id in vlan -%}
+    {%-if vlan[vlans_id]["IES"]-%}
+    {%-if vlan[vlans_id]["customer_id"]%}
+        vpls {{vlans_id}} name "MGMT-{{vlans_id}}" customer {{vlan[vlans_id]["customer_id"]}} create
+    {%-else %}
+        vpls {{vlans_id}} name "MGMT-{{vlans_id}}" customer 1 create
+    {%-endif%}
+            allow-ip-int-bind
+            exit
+            stp
+                shutdown
+            exit
+            {%-for lag in vlan[vlans_id]["lag"]%}
+            sap lag-{{lag}}:{{vlans_id}} create
+                no shutdown
+            exit
+{%-endfor %}
+            no shutdown
+        exit
+        ies {{vlan[vlans_id]["IES"]}} name "VL{{vlans_id}}" customer {{vlan[vlans_id]["customer_id"]}} create
+            interface "MGMT-{{vlans_id}}" create
+            {%-if vlan[vlans_id]["prefixlen"] %}
+                address {{vlan[vlans_id]["IP"][0]}}/{{vlan[vlans_id]["prefixlen"]}}
+            {%-else%}
+            {%- for keys,values in vlan[vlans_id].items() %}
+            {%- if "." in keys %}
+                {{vlan[vlans_id][keys]["Role"]}} {{keys}}/{{vlan[vlans_id][keys]["prefixlen"]}}
+            {%-endif%}
+            {%-endfor-%}
+            {%-endif%}
+                {%-if vlan[vlans_id]["DHCP"]%}
+                icmp
+                    ttl-expired 100 16
+                exit
+                dhcp
+                {%- for group_id in DHCP -%}
+                {%- if group_id in DHCP %}
+                    server {{DHCP[group_id]}}
+                    no shutdown
+                exit
+                {%-endif-%}
+                {%-endfor-%}
+                {%-endif%}
+                vpls "MGMT-{{vlans_id}}"
+                exit
+            exit
+            no shutdown
+        exit
+{%-endif -%}
+{%-endfor %}
+{%- for vsi_id in vsi -%}
+{%- if "Type" not in vsi[vsi_id]%}
+        vpls {{vsi_id}} name "{{vsi_id}}" customer 1 create
+            stp
+                shutdown
+            exit
+            {%- for ether_id in Eth_Trunk -%}
+            {%- if "connection_profile" in Eth_Trunk[ether_id] -%}
+            {%-if Eth_Trunk[ether_id]["stacking_vlan"]==vsi_id %}
+            sap lag-{{Eth_Trunk[ether_id]["lag"]}}:cp-{{Eth_Trunk[ether_id]["connection_profile"]}} create
+                ingress
+                    vlan-manipulation
+                        push {{Eth_Trunk[ether_id]["stacking_vlan"]}}
+                    exit
+                exit
+                egress
+                    vlan-manipulation
+                        translate 1-to-1 null
+                    exit
+                exit
+                no shutdown
+            exit
+{%-endif -%}
+{%-endif -%}
+{%-endfor -%}
+{%-for mpls_peer_ip in mpls_peer-%}
+{%- if vsi[vsi_id]["peer"]==mpls_peer_ip %}
+            spoke-sdp {{mpls_peer[mpls_peer_ip]["changed_id"]}}:{{vsi[vsi_id]["vsi_id"]}} vc-type vlan create
+                no shutdown
+            exit
+            no shutdown
+        exit
+{%-endif -%}
+{%-endfor %}
+{%-endif -%}
+{%-endfor %}
+    exit
+#--------------------------------------------------
+echo "Router (Service Side) Configuration"
+#--------------------------------------------------
+    router Base
+{%-for vlans_id in vlan-%}
+{%-if vlans_id in management_vlans -%}
+{%- if vlan[vlans_id]["isis_process_id"]-%}
+{%-for isis_id in isis-%}
+{%-if vlan[vlans_id]["isis_process_id"] -%}
+{%- if isis_id -%}
+{%- if vlan[vlans_id]["isis_process_id"]== isis_id%}
+        isis {{isis[isis_id]["changed_id"]}}
+        {%-endif -%}
+        {%-endif -%}
+        {%-endif -%}
+        {%-endfor %}
+            interface "MGMT-{{vlans_id}}"
+                interface-type broadcast
+                {%- if vlan[vlans_id]["isis_role"] -%}
+                {%-if vlan[vlans_id]["isis_role"]=="silent" %}
+                passive
+                {%-endif-%}
+                {%- endif %}
+                no shutdown
+            exit
+            no shutdown
+        exit
+{%-endif %}
+{%-endif %}
+{%-endfor %}
+{%-if Policy_Configuration %}
+#--------------------------------------------------
+echo "Policy Configuration"
+#--------------------------------------------------
+        policy-options
+            begin
+            prefix-list "LSP_AX_IP"
+            {%- for ips in Policy_Configuration["AX_ip_details"]%}
+                prefix {{ips[0]}}/{{ips[1]}} exact
+                {%-endfor %}
+            exit
+            prefix-list "LSP_DX_IP"
+            {%- for ips in Policy_Configuration["DX_ip_details"]%}
+                prefix {{ips[0]}}/{{ips[1]}} exact
+                {%-endfor %}
+            exit
+            policy-statement "LER_POLICY"
+                entry 10
+                    from
+                        prefix-list "LSP_AX_IP"
+                    exit
+                    action accept
+                    exit
+                exit
+            exit
+            policy-statement "LSR_POLICY"
+                entry 10
+                    from
+                        prefix-list "LSP_DX_IP"
+                    exit
+                    action accept
+                    exit
+                exit
+            exit
+            commit
+        exit
+    exit
+{%-else %}
+    exit
+{%- endif %}
+#--------------------------------------------------
+echo "Log all events for service vprn, log syslog tls-client-profile Configuration"
+#--------------------------------------------------
+    log
+    {%- for syslog_ips in syslog%}
+        syslog {{loop.index}} name "{{loop.index}}"
+        exit
+        log-id {{loop.index}} name "{{loop.index}}"
+            no shutdown
+        exit
+    {%- endfor %}
+    exit
+{%- if NTP %}
+#--------------------------------------------------
+echo "System Time NTP Configuration"
+#--------------------------------------------------
+    system
+        time
+            ntp
+            {%- for key,values in NTP.items()-%}
+                {%- if "preference" in values %}
+                server {{key}} prefer
+                {%- else %}
+                server {{key}}
+                {%- endif %}
+            {%- endfor %}
+            exit
+        exit
+    exit
+
+exit all
+{%-endif%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

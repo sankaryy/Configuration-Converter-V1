@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<h1><b>Config Changer!!!</b></h1> 
+</head> 
+<body>
+    <form action="/route" method="post" enctype="multipart/form-data">
+        <label for="Available_features"><b>features : </b></label>
+        <select id="Available_features" name="Available_features" required>
+            <option value="Generator">New Configuration Generator</option>
+            <option value="Converter">Converter</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form> 
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    form {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 16px;
+    }
+
+    select, input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    h1 {
+        text-align: center;
+        color: red;
+    }
+</style> 
+</html>

@@ -1,0 +1,21 @@
+{"script_config":{
+    "tacacs_password" : "TACACS_SHARED_SECRET",
+    "local_password" : "PASSWORD",
+    "keychain_key" : "ISIS_KEYCHAIN",
+    "snmpv3_username" :"SNMP_STRING",
+    "snmpv3_password" :"SNMP_PASSWORD",
+    "snmpv3_md5":"SNMP_HASH_MD5",
+    "snmpv3_aes": "SNMP_HASH_AES",
+    "plain_text_snmpv3_md5":"SNMP_MD5_PLAIN",
+    "plain_text_snmpv3_aes":"SNMP_AES_PLAIN",
+    "snmp_engineid" : "SNMP_ENGINE_ID",
+    "snmp_group":"SNMP_GROUP",
+    "banner":"yes",
+    "management_vlans":["2","50","7"],
+
+
+"vlan_range":{"Retail":"[(99,4094)]"},
+"connection_profile_id":{
+                "Retail":1}
+    }
+}

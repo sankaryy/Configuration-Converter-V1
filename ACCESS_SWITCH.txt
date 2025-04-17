@@ -1,0 +1,844 @@
+!Software Version V200R021C00SPC100
+#
+sysname ACCESS_SWITCH
+#
+info-center loghost source LoopBack0
+info-center loghost 0.0.0.0 facility local0 local-time
+info-center loghost 0.0.0.0 facility local1 local-time
+#
+vcmp role silent
+#
+vlan batch 2 7 27 to 28 50
+#
+loopback-detect auto disable
+#
+stp disable
+#
+undo authentication unified-mode
+#
+domain auth
+domain auth admin
+#
+telnet server enable
+telnet ipv6 server enable
+telnet server-source all-interface
+telnet ipv6 server-source all-interface
+#
+undo http server enable
+undo http secure-server enable
+#
+undo management-port isolate enable
+undo management-plane isolate enable
+#
+clock timezone UTC+5:30 add 05:30:00
+#
+drop illegal-ip disable
+#
+ecmp local-preference disable
+#
+route low-priority enable
+#
+dhcp enable
+dhcp set ttl 16
+#
+portal pass dns enable
+#
+undo pki key enhance enable
+#
+diffserv domain default
+#
+radius-server template default
+#
+hwtacacs-server template tac
+ hwtacacs-server authentication 0.0.0.0
+ hwtacacs-server authentication 0.0.0.0 secondary
+ hwtacacs-server authorization 0.0.0.0
+ hwtacacs-server authorization 0.0.0.0 secondary
+ hwtacacs-server accounting 0.0.0.0
+ hwtacacs-server accounting 0.0.0.0 secondary
+ hwtacacs-server shared-key cipher %^%#,oV(~vluuTBkK(U5SJ61*]6]/&bvK'7K7HC)>.E;9GRg!V8p#~xW2l0MSq@#%^%#
+#
+hwtacacs-server template tac2
+ hwtacacs-server authentication 0.0.0.0
+ hwtacacs-server authentication 0.0.0.0 secondary
+ hwtacacs-server authorization 0.0.0.0
+ hwtacacs-server authorization 0.0.0.0 secondary
+ hwtacacs-server accounting 0.0.0.0
+ hwtacacs-server accounting 0.0.0.0 secondary
+ hwtacacs-server shared-key cipher %^%#(9:x$E`@>~a~9_%-]P5I4\GM<9lM=O\IcxBOYzR(6bs*Zc[WyIF>{y<dMl9Z%^%#
+#
+mpls lsr-id 1.1.1.1
+mpls
+ label advertise non-null
+ lsp-trigger ip-prefix LSP_AX_IP
+#
+mpls l2vpn
+#
+vsi V2
+ pwsignal ldp
+  vsi-id 26
+  peer 10.150.0.100 upe
+#
+vsi 3606 static
+ pwsignal ldp
+  vsi-id 60000183
+  peer 10.150.0.100
+#
+vsi 3464 static
+ pwsignal ldp
+  vsi-id 80000041
+  peer 10.150.0.100 upe
+#
+vsi 3465 static
+ pwsignal ldp
+  vsi-id 80000042
+  peer 10.150.0.100 upe
+#
+vsi 3473 static
+ pwsignal ldp
+  vsi-id 80000043
+  peer 10.150.0.100 upe
+#
+vsi 3479 static
+ pwsignal ldp
+  vsi-id 80000044
+  peer 10.150.0.100 upe
+#
+vsi 3487 static
+ pwsignal ldp
+  vsi-id 80000045
+  peer 10.150.0.100 upe
+#
+vsi 3454 static
+ pwsignal ldp
+  vsi-id 80000030
+  peer 10.150.0.100 upe
+#
+vsi 3892 static
+ pwsignal ldp
+  vsi-id 70000002
+  peer 10.150.0.100 upe
+#
+mpls ldp
+ remote-peer pwe3
+ inbound peer all fec ip-prefix LSP_DX_IP
+#
+#
+mpls ldp remote-peer 10.150.0.100
+ remote-ip 10.150.0.100
+#
+pki realm default
+ certificate-check none
+#
+keychain keyauth mode absolute
+ key-id 1
+  algorithm hmac-sha-256
+  key-string cipher %^%#Bobv8xp-$0i~AeHO2N"+&o>g785:Y,J4]4Ip=R!/%^%#
+  send-time 00:01 2023-03-06 duration infinite
+  receive-time 00:01 2023-03-06 duration infinite
+#
+drop-profile default
+#
+dhcp server group 1
+ dhcp-server 1.1.1.1
+#
+aaa
+ authentication-scheme default
+  authentication-mode hwtacacs local
+ authentication-scheme local-tacacs
+  authentication-mode local hwtacacs
+ authentication-scheme radius
+  authentication-mode radius
+ authentication-scheme tac
+  authentication-mode hwtacacs local
+ authorization-scheme default
+  authorization-mode hwtacacs local
+ authorization-scheme local-tacacs
+  authorization-mode local hwtacacs
+ authorization-scheme tac
+  authorization-mode hwtacacs local
+ accounting-scheme default
+  accounting-mode hwtacacs
+  accounting realtime 1
+  accounting start-fail online
+ accounting-scheme local-tacacs
+  accounting-mode hwtacacs
+  accounting realtime 1
+  accounting start-fail online
+ accounting-scheme tac
+  accounting-mode hwtacacs
+  accounting realtime 1
+  accounting start-fail online
+ recording-scheme tac0
+  recording-mode hwtacacs tac2
+ cmd recording-scheme tac0
+ outbound recording-scheme tac0
+ system recording-scheme tac0
+ local-aaa-user password policy administrator
+  password history record number 0
+  undo password alert original
+  password expire 0
+ domain auth
+  authentication-scheme tac
+  accounting-scheme tac
+  authorization-scheme tac
+  radius-server default
+  hwtacacs-server tac
+ domain default
+  authentication-scheme default
+  accounting-scheme default
+  radius-server default
+ domain default_admin
+  authentication-scheme default
+  accounting-scheme default
+ domain local-lpm
+  authentication-scheme local-tacacs
+  accounting-scheme local-tacacs
+  authorization-scheme local-tacacs
+  radius-server default
+  hwtacacs-server tac
+ domain tac
+  authentication-scheme default
+  accounting-scheme default
+  authorization-scheme default
+  radius-server default
+  hwtacacs-server tac2
+ local-user admin password irreversible-cipher $1c$IB[bRIqC;6$o(8k9{/"!@zv<B<q!;2+2g^e-%Vj(,hZ5e%HEI""$
+ local-user admin privilege level 3
+ local-user admin service-type telnet ssh
+#
+isis 1
+ is-level level-1
+ cost-style wide
+ timer lsp-generation 1 1 120 level-1
+ flash-flood level-1
+ network-entity 10.YYYY.XXXX.YYYY.XX
+ timer spf 1 20 100
+#
+ntp-service server disable
+ntp-service ipv6 server disable
+ntp-service source-interface LoopBack0
+ntp-service unicast-server 2.2.2.2 preference
+ntp-service unicast-server 1.1.1.1
+ntp-service unicast-server 1.1.1.1
+#
+interface Vlanif1
+#
+interface Vlanif2
+ l2 binding vsi V2
+#
+interface Vlanif7
+ ip address 1.1.1.1 255.0.0.0
+ isis enable 1
+ isis silent
+ arp gratuitous-arp send enable
+ dhcp select relay
+ dhcp relay server-select 1
+#
+interface Vlanif27
+ ip address 10.19.19.91 255.255.255.252
+ isis enable 1
+ isis authentication-mode keychain keyauth send-only
+ mpls
+ mpls ldp
+#
+interface Vlanif28
+ ip address 10.128.125.125 255.255.255.252
+ isis enable 1
+ isis authentication-mode keychain keyauth send-only
+ isis cost 999
+ mpls
+ mpls ldp
+#
+interface Vlanif50
+ ip address 10.22.60.1 255.0.0.0
+ isis enable 1
+ isis silent
+#
+interface MEth0/0/1
+ shutdown
+ ip address 192.168.1.253 255.255.255.0
+#
+interface Eth-Trunk1
+ port link-type trunk
+ port trunk allow-pass vlan 69 88
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk1.3464
+ qinq stacking vid 3494 to 3495 pe-vid 3464
+ qinq stacking vid 3503 pe-vid 3464
+ qinq stacking vid 3691 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk1.3473
+ qinq stacking vid 3689 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk1.3487
+ qinq stacking vid 3582 pe-vid 3487
+ qinq stacking vid 3671 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk1.3606
+ qinq stacking vid 1501 to 1692 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk2
+ port link-type trunk
+ port trunk allow-pass vlan 3 7 10
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk2.3464
+ qinq stacking vid 3496 to 3497 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk2.3479
+ qinq stacking vid 3542 pe-vid 3479
+ qinq stacking vid 3558 pe-vid 3479
+ l2 binding vsi 3479
+#
+interface Eth-Trunk2.3487
+ qinq stacking vid 3461 pe-vid 3487
+ qinq stacking vid 3490 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk2.3606
+ qinq stacking vid 2421 to 2612 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk2.3892
+ qinq stacking vid 3731 pe-vid 3892
+ qinq stacking vid 3806 pe-vid 3892
+ l2 binding vsi 3892
+#
+interface Eth-Trunk2.3951
+ qinq stacking vid 3956 pe-vid 3951
+ l2 binding vsi 3951
+#
+interface Eth-Trunk3
+ description TEST
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk3.3464
+ description TEST
+ qinq stacking vid 3480 to 3486 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk3.3465
+ qinq stacking vid 3556 pe-vid 3465
+ l2 binding vsi 3465
+#
+interface Eth-Trunk3.3473
+ description TEST
+ qinq stacking vid 3487 pe-vid 3473
+ qinq stacking vid 3527 pe-vid 3473
+ qinq stacking vid 3538 pe-vid 3473
+ qinq stacking vid 3540 pe-vid 3473
+ qinq stacking vid 3541 pe-vid 3473
+ qinq stacking vid 3621 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk3.3479
+ description TEST
+ qinq stacking vid 3507 pe-vid 3479
+ l2 binding vsi 3479
+#
+interface Eth-Trunk3.3606
+ description TEST
+ qinq stacking vid 501 to 692 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk4
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk4.3464
+ description TEST
+ qinq stacking vid 3500 to 3507 pe-vid 3464
+ qinq stacking vid 3679 to 3680 pe-vid 3464
+ qinq stacking vid 3687 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk4.3465
+ qinq stacking vid 3678 pe-vid 3465
+ l2 binding vsi 3465
+#
+interface Eth-Trunk4.3473
+ description TEST
+ qinq stacking vid 3649 pe-vid 3473
+ qinq stacking vid 3681 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk4.3479
+ qinq stacking vid 3468 pe-vid 3479
+ qinq stacking vid 3528 pe-vid 3479
+ qinq stacking vid 3530 pe-vid 3479
+ qinq stacking vid 3603 pe-vid 3479
+ qinq stacking vid 3604 pe-vid 3479
+ qinq stacking vid 3626 pe-vid 3479
+ qinq stacking vid 3688 pe-vid 3479
+ l2 binding vsi 3479
+#
+interface Eth-Trunk4.3606
+ qinq stacking vid 1701 to 2068 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk4.3892
+ qinq stacking vid 3806 pe-vid 3892
+ l2 binding vsi 3892
+#
+interface Eth-Trunk5
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk5.3454
+ description TEST
+ qinq stacking vid 3463 pe-vid 3454
+ l2 binding vsi 3454
+#
+interface Eth-Trunk5.3464
+ description TEST
+ qinq stacking vid 3473 to 3475 pe-vid 3464
+ qinq stacking vid 3478 pe-vid 3464
+ qinq stacking vid 3654 pe-vid 3464
+ qinq stacking vid 3658 pe-vid 3464
+ qinq stacking vid 3681 pe-vid 3464
+ qinq stacking vid 3686 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk5.3473
+ description TEST
+ qinq stacking vid 3567 pe-vid 3473
+ qinq stacking vid 3587 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk5.3479
+ description TEST
+ qinq stacking vid 3584 pe-vid 3479
+ qinq stacking vid 3590 pe-vid 3479
+ qinq stacking vid 3611 pe-vid 3479
+ qinq stacking vid 3660 pe-vid 3479
+ l2 binding vsi 3479
+#
+interface Eth-Trunk5.3487
+ description TEST
+ qinq stacking vid 3488 pe-vid 3487
+ qinq stacking vid 3504 pe-vid 3487
+ qinq stacking vid 3566 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk5.3606
+ qinq stacking vid 2613 to 2804 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk5.3892
+ description TEST
+ qinq stacking vid 3709 pe-vid 3892
+ qinq stacking vid 3716 pe-vid 3892
+ l2 binding vsi 3892
+#
+interface Eth-Trunk6
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk6.3464
+ description TEST
+ qinq stacking vid 3512 to 3515 pe-vid 3464
+ qinq stacking vid 3610 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk6.3606
+ qinq stacking vid 2997 to 3188 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk6.3892
+ description TEST
+ qinq stacking vid 3731 pe-vid 3892
+ l2 binding vsi 3892
+#
+interface Eth-Trunk7
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk7.3464
+ description TEST
+ qinq stacking vid 3516 to 3521 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk7.3473
+ description TEST
+ qinq stacking vid 3462 pe-vid 3473
+ qinq stacking vid 3474 pe-vid 3473
+ qinq stacking vid 3677 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk7.3487
+ description TEST
+ qinq stacking vid 3561 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk7.3606
+ qinq stacking vid 1301 to 1492 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk9
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk9.3464
+ description TEST
+ qinq stacking vid 3476 to 3479 pe-vid 3464
+ qinq stacking vid 3681 pe-vid 3464
+ qinq stacking vid 3682 pe-vid 3464
+ qinq stacking vid 3683 to 3684 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk9.3465
+ description TEST
+ qinq stacking vid 3466 pe-vid 3465
+ qinq stacking vid 3607 pe-vid 3465
+ l2 binding vsi 3465
+#
+interface Eth-Trunk9.3473
+ description TEST
+ qinq stacking vid 3488 pe-vid 3473
+ qinq stacking vid 3645 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk9.3487
+ description TEST
+ qinq stacking vid 3464 pe-vid 3487
+ qinq stacking vid 3549 pe-vid 3487
+ qinq stacking vid 3668 pe-vid 3487
+ qinq stacking vid 3672 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk9.3606
+ description TEST
+ qinq stacking vid 2805 to 2996 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface Eth-Trunk9.3892
+ description TEST
+ qinq stacking vid 3709 pe-vid 3892
+ qinq stacking vid 3716 pe-vid 3892
+ l2 binding vsi 3892
+#
+interface Eth-Trunk10
+ description TEST
+ port link-type trunk
+ port trunk allow-pass vlan 2 50
+ mode lacp
+ port-isolate enable group 1
+ trust dscp
+#
+interface Eth-Trunk10.3178
+ description TEST
+ qinq stacking vid 1941 to 2132 pe-vid 3178
+#
+interface Eth-Trunk10.3464
+ qinq stacking vid 3452 pe-vid 3464
+ qinq stacking vid 3456 to 3461 pe-vid 3464
+ qinq stacking vid 3463 to 3472 pe-vid 3464
+ qinq stacking vid 3496 pe-vid 3464
+ qinq stacking vid 3523 pe-vid 3464
+ l2 binding vsi 3464
+#
+interface Eth-Trunk10.3465
+ qinq stacking vid 3673 pe-vid 3465
+ l2 binding vsi 3465
+#
+interface Eth-Trunk10.3473
+ qinq stacking vid 3474 pe-vid 3473
+ qinq stacking vid 3579 pe-vid 3473
+ qinq stacking vid 3582 pe-vid 3473
+ l2 binding vsi 3473
+#
+interface Eth-Trunk10.3479
+ qinq stacking vid 3520 pe-vid 3479
+ qinq stacking vid 3538 pe-vid 3479
+ qinq stacking vid 3623 pe-vid 3479
+ qinq stacking vid 3635 pe-vid 3479
+ qinq stacking vid 3636 pe-vid 3479
+ l2 binding vsi 3479
+#
+interface Eth-Trunk10.3487
+ qinq stacking vid 3504 pe-vid 3487
+ qinq stacking vid 3665 pe-vid 3487
+ l2 binding vsi 3487
+#
+interface Eth-Trunk10.3606
+ description TEST
+ qinq stacking vid 869 to 1060 pe-vid 3606
+ l2 binding vsi 3606
+#
+interface XGigabitEthernet0/0/1
+ description TEST
+ eth-trunk 1
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/2
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/3
+ description TEST
+ eth-trunk 2
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/4
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/5
+ description TEST
+ eth-trunk 3
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/6
+ description TEST
+ eth-trunk 3
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/7
+ description TEST
+ eth-trunk 4
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/8
+ description TEST
+ eth-trunk 4
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/9
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/10
+ description TEST
+ eth-trunk 5
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/11
+ description TEST
+ eth-trunk 6
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/12
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/13
+ description TEST
+ eth-trunk 7
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/14
+ description TEST
+ eth-trunk 7
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/15
+ shutdown
+ trust dscp
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/16
+ shutdown
+ trust dscp
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/17
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/18
+ description TEST
+ eth-trunk 9
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/19
+ shutdown
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/20
+ description TEST
+ eth-trunk 10
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/21
+ shutdown
+ trust dscp
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/22
+ shutdown
+ trust dscp
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/23
+ description TEST
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 28
+ trust dscp
+ qos burst-mode enhanced
+#
+interface XGigabitEthernet0/0/24
+ description TEST
+ port link-type trunk
+ undo port trunk allow-pass vlan 1
+ port trunk allow-pass vlan 27
+ trust dscp
+ qos burst-mode enhanced
+#
+interface 40GE0/0/1
+ shutdown
+#
+interface 40GE0/0/2
+ shutdown
+#
+interface 40GE0/0/3
+ shutdown
+#
+interface 40GE0/0/4
+ shutdown
+#
+interface 40GE0/0/5
+ shutdown
+#
+interface 40GE0/0/6
+ shutdown
+#
+interface NULL0
+#
+interface LoopBack0
+ ip address 10.150.3.38 255.255.255.255
+ isis enable 1
+#
+cpu-defend policy isis
+ car packet-type isis cir 512 cbs 96256
+ car packet-type igmp cir 256 cbs 48128
+ car packet-type mpls-ldp cir 512 cbs 96256
+ car packet-type ttl-expired cir 128 cbs 24064
+ car packet-type mpls-ttl-expired cir 256 cbs 48128
+ car packet-type telnet cir 256 cbs 48128
+ car packet-type ssh cir 256 cbs 48128
+ car packet-type snmp cir 256 cbs 48128
+ car packet-type arp-miss cir 128 cbs 24064
+#
+undo icmp name timestamp-request receive
+#
+ip ip-prefix LSP_AX_IP index 1 permit 10.150.0.100 32
+ip ip-prefix LSP_AX_IP index 2 permit 10.150.3.38 32
+ip ip-prefix LSP_DX_IP index 1 permit 10.150.0.100 32
+ip ip-prefix LSP_DX_IP index 2 permit 10.150.3.38 32
+ip ip-prefix LSP_DX_IP index 3 permit 10.150.3.61 32
+ip ip-prefix LSP_DX_IP index 4 permit 10.150.3.33 32
+#
+snmp-agent
+snmp-agent local-engineid 
+snmp-agent community complexity-check disable
+snmp-agent sys-info version v3
+snmp-agent group v3 Atria privacy read-view iso-view notify-view iso-view
+snmp-agent mib-view included iso-view iso
+snmp-agent usm-user v3 
+snmp-agent usm-user v3  group 
+snmp-agent usm-user v3  authentication-mode md5 cipher %^%#:JoT3]|r_SRbhE4Z~V:UX#V$=ipd(FJ-sY8rSPN!%^%#
+snmp-agent usm-user v3  privacy-mode aes128 cipher %^%#U+x4I1CfL,q7ze)iNmA6^t{51&,j)"meez0K7;%A]O<cIV9OY0V%](IWm%oK%^%#
+snmp-agent trap enable
+snmp-agent protocol source-status all-interface
+snmp-agent protocol source-status ipv6 all-interface
+#
+stelnet server enable
+ssh client first-time enable
+ssh server-source all-interface
+ssh ipv6 server-source all-interface
+ssh server cipher aes256_ctr aes128_ctr
+ssh server hmac sha2_256
+ssh server key-exchange dh_group16_sha512 dh_group15_sha512 dh_group14_sha256 dh_group_exchange_sha256
+ssh client cipher aes256_ctr aes128_ctr
+ssh client hmac sha2_256
+ssh client key-exchange dh_group16_sha512 dh_group15_sha512 dh_group14_sha256 dh_group_exchange_sha256
+ssh server dh-exchange min-len 2048
+ssh server publickey ecc dsa rsa
+#
+header login file flash:/Banner.txt
+#
+cpu-defend-policy isis global
+cpu-defend-policy isis
+#
+capwap dtls psk %^%#G\i!7rMMj7xTOU=5P~aJ[]gd'}WXq<Db>M>@ov`$%^%#
+capwap dtls inter-controller psk %^%#O_Ns7D{TE9{!0#FH4hiIa'DXIAPkwX}K.%@6BIj29.c&4L+^[QK*.Y*(8}cF%^%#
+capwap dtls cert-mandatory-match enable
+#
+user-interface maximum-vty 15
+user-interface con 0
+ authentication-mode password
+ set authentication password cipher $1c$#=3CV|z,@*$\4$:.<uZV"Q1_pQFP2xYeMx6P/1V_-GeRD+x>_Q@$
+ idle-timeout 5 0
+user-interface vty 0 14
+ authentication-mode aaa
+ user privilege level 15
+ idle-timeout 5 0
+ protocol inbound all
+user-interface vty 16 20
+ protocol inbound telnet
+#
+wlan
+ traffic-profile name default
+ security-profile name default
+  security open
+ security-profile name default-wds
+ security-profile name default-mesh
+ ssid-profile name default
+ vap-profile name default
+ wds-profile name default
+ mesh-handover-profile name default
+ mesh-profile name default
+ regulatory-domain-profile name default
+ air-scan-profile name default
+ rrm-profile name default
+ radio-2g-profile name default
+ radio-5g-profile name default
+ wids-spoof-profile name default
+ wids-whitelist-profile name default
+ wids-profile name default
+ ap-system-profile name default
+ port-link-profile name default
+ wired-port-profile name default
+ ap-group name default
+ provision-ap
+#
+ops
+#
+return

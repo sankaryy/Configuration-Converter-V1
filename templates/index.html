@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<h1><b>Config Changer!!!</b></h1> 
+</head> 
+<body>
+    <form action="/DONE" method="post" enctype="multipart/form-data">
+        <label for="Source_file"><b>Source File : </b></label>
+        <select id="Source_file" name="Source_file">
+        <option value="None">NONE</option>
+        <option value="huawei">Huawei</option>
+    </select>
+        <label for="destination_file"><b>Destination file:</b></label>
+        <select id="destination_file" name="destination_file">
+            <option value="None">NONE</option>
+            <option value="NOKIA">NOKIA</option>
+        </select><br>
+        <br>
+        <label for="input_file"><b>Input File :</b></label>
+        <input type="file" name="input_file" accept=".doc,.docx,.txt" required> <br>
+        <br>
+        <input type="submit" value="Submit">
+      </form> 
+</body>
+<style>
+    h1 { text-align: center ; color: red;}
+</style> 
+</html>
+
+
+

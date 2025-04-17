@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<h1><b>Config Converter</b></h1> 
+</head> 
+<body>
+    <form action="/Converter" method="post" enctype="multipart/form-data">
+        <label for="Source_file"><b>Source File : </b></label>
+        <select id="Source_file" name="Source_file" required>
+            <option value="None">NONE</option>
+            <option value="HUAWEI-ANY">HUAWEI-ANY</option>
+        </select>
+        <label for="destination_file"><b>Destination file:</b></label>
+        <select id="destination_file" name="destination_file">
+            <option value="None">NONE</option>
+            <option value="NOKIA-7250-IXR">NOKIA-7250-IXR</option>
+        </select>
+        <label for="City"><b>City:</b></label>
+        <select id="City" name="City">
+            <option value="CHN">Chennai</option>
+            <option value="BLR">Bangalore</option>
+            <option value="CBE">Coimbatore</option>
+            <option value="DEL">Delhi</option>
+            <option value="VIZ">vizag</option>
+            <option value="VJW">Vijayawada</option>
+            <option value="NLR">Nellore</option>
+            <option value="HYD">Hyderabad</option>
+        </select><br>
+        <br>
+        <label for="input_file"><b>Input File :</b></label>
+        <input type="file" name="input_file" accept=".doc,.docx,.txt" required> <br>
+        <br>
+        <input type="submit" value="Submit">
+    </form> 
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    form {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 16px;
+    }
+
+    select, input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    h1 {
+        text-align: center;
+        color: red;
+    }
+</style> 
+</html>

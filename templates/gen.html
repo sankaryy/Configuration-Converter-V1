@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<h1><b>Config Changer!!!</b></h1> 
+</head> 
+<body>
+    <form action="/generator" method="post" enctype="multipart/form-data">
+        <label for="Vendor"><b>Vendor : </b></label>
+        <select id="Vendor" name="Vendor" required>
+            <option value="NOKIA">Nokia-IXR-7250</option>
+            <option value="HUAWEI">HUAWEI-ANY</option>
+        </select>
+        <br>
+        <br>
+        <label for="system_name"><b>system name:</b></label>
+        <input type="text" id="sysname" name="sysname" oninput="this.value = this.value.toUpperCase()" 
+        placeholder="sample input : CHN-DLF-AX1"required ><br><br>
+        <label for="vlans"><b>VLANS:</b></label>
+        <input type="text" id="vlans" name="vlans" oninput="this.value = this.value.replace(/[^0-9.,]/g, '').toUpperCase()"
+        placeholder="sample input : 10,20" required ><br><br>
+        <label for="IPS"><b>IP's:</b></label>
+        <input type="text" id="ips" name="ips" oninput="this.value = this.value.replace(/[^0-9.,/]/g, '').toUpperCase()"
+        placeholder="sample input : 10.10.0.1/30,10.10.0.5/30" required><br><br>
+        <label for="UPLINKS"><b>UPLINKS:</b></label>
+        <input type="text" id="uplinks" name="uplinks" oninput="this.value = this.value.replace(/[^0-9.,/[]]/g, '').toUpperCase()"
+        placeholder="sample input : 1/1/23,1/1/24 OR 0/0/23,0/0/24" required><br><br>
+        <label for="city"><b>CITY </b></label>
+        <select id="city" name="city" required>
+            <option value="None">NONE</option>
+            <option value="CHN">Chennai</option>
+            <option value="BLR">Bangalore</option>
+            <option value="CBE">Coimbatore</option>
+        </select><br><br>
+        <label for="Port_bandwidth"><b>UPLINKS BANDWIDTH </b></label>
+        <select id="Port_bandwidth" name="Port_bandwidth" required>
+            <option value=1>1-GIG</option>
+            <option value=10>10-GIG</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form> 
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    form {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 16px;
+    }
+
+    select, input[type="file"], input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    h1 {
+        text-align: center;
+        color: red;
+    }
+</style>
