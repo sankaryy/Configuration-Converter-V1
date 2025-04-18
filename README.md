@@ -4,14 +4,26 @@ This is a Tool to convert a access layer switch configuration from one vendor de
 Python Version 3.10.12
 
 Python Modules used :
-Flask
-io
-logging
-json
-ast
-os
-sys
-re
-configparser
-jinja2
-ipaddress
+
+- [x] Flask
+- [x] io
+- [x] logging
+- [x] json
+- [x] ast
+- [x] os
+- [x] sys
+- [x] re
+- [x] configparser
+- [x] jinja2
+- [x] ipaddress
+
+
+
+
+
+
+
+
+
+
+
