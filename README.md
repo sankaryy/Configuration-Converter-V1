@@ -1,6 +1,5 @@
 # Configuration-Converter-Version 1
-This is a Tool to convert a access layer switch configuration from one vendor device to other. Currently it can able to convert HUAWEI to NOKIA 
-
+This is an automated Python scalable tool to convert Huawei network device configurations into Nokia-compatible format for distributed access ISP networks.
 Python Version 3.10.12
 
 Python Modules used :
